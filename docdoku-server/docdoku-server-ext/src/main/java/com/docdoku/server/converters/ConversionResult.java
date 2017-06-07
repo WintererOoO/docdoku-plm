@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -41,100 +42,156 @@ import java.util.stream.Collectors;
  */
 public class ConversionResult implements Closeable, Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(ConversionResult.class.getName());
+	public static class Position implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+		/**
+		 * Position of a component instance
+		 */
+		private static final long serialVersionUID = 1L;
 
-    /**
-     * The converted file for succeed conversions
-     */
-    private URI convertedFile;
-    /**
-     * The list of materials files if any
-     */
-    private List<URI> materials = new ArrayList<>();
-    /**
-     * The output of conversion program
-     */
-    private String stdOutput;
-    /**
-     * The error output of conversion program
-     */
-    private String errorOutput;
+		private double[] origin;
+		private double[][] rotationmatrix;
 
-    /**
-     * Default constructor
-     */
-    public ConversionResult() {
-    }
+		/**
+		 * Constructor for a component position.
+		 * 
+		 * @param x
+		 *            1st line of the matrix
+		 * @param y
+		 * @param z
+		 * @param o
+		 *            Origin coordinates
+		 */
+		public Position(double[][] rm, double[] o) {
+			this.origin = o;
+			this.rotationmatrix = rm;
+		}
 
-    /**
-     * Constructor with converted file
-     *
-     * @param convertedFile the converted file
-     */
-    public ConversionResult(Path convertedFile) {
-        this.convertedFile = convertedFile.toUri();
-    }
+		public double[] getOrigin() {
+			return origin;
+		}
 
-    /**
-     * Constructor with converted file and materials
-     *
-     * @param convertedFile the converted file
-     */
-    public ConversionResult(Path convertedFile, List<Path> materials) {
-        this.convertedFile = convertedFile.toUri();
-        this.materials = new ArrayList<>();
-        materials.forEach((path) -> this.materials.add(path.toUri()));
-    }
+		public double[][] getRotationMatrix() {
+			return this.rotationmatrix;
+		}
+	}
 
-    public Path getConvertedFile() {
-        return Paths.get(convertedFile);
-    }
+	private static final Logger LOGGER = Logger.getLogger(ConversionResult.class.getName());
 
-    public void setConvertedFile(Path convertedFile) {
-        this.convertedFile = convertedFile.toUri();
-    }
+	private static final long serialVersionUID = 1L;
 
-    public List<Path> getMaterials() {
-        return materials.stream().map((uri) -> {
-            return Paths.get(uri);
-        }).collect(Collectors.toList());
-    }
+	/**
+	 * The converted file for succeed conversions
+	 */
+	private URI convertedFile;
+	/**
+	 * The list of materials files if any
+	 */
+	private List<URI> materials = new ArrayList<>();
+	/**
+	 * The output of conversion program
+	 */
+	private String stdOutput;
+	/**
+	 * The error output of conversion program
+	 */
+	private String errorOutput;
 
-    public void setMaterials(List<Path> materials) {
-        this.materials = new ArrayList<>();
-        materials.forEach((path) -> this.materials.add(path.toUri()));
-    }
+	private Map<String, List<Position>> componentPositionMap;
 
-    public String getStdOutput() {
-        return stdOutput;
-    }
+	/**
+	 * Default constructor
+	 */
+	public ConversionResult() {
+	}
 
-    public void setStdOutput(String stdOutput) {
-        this.stdOutput = stdOutput;
-    }
+	/**
+	 * Constructor with converted file
+	 *
+	 * @param convertedFile
+	 *            the converted file
+	 */
+	public ConversionResult(Path convertedFile) {
+		this.convertedFile = convertedFile.toUri();
+	}
 
-    public String getErrorOutput() {
-        return errorOutput;
-    }
+	/**
+	 * Constructor with converted file and materials
+	 *
+	 * @param convertedFile
+	 *            the converted file
+	 */
+	public ConversionResult(Path convertedFile, List<Path> materials) {
+		this.convertedFile = convertedFile.toUri();
+		this.materials = new ArrayList<>();
+		materials.forEach((path) -> this.materials.add(path.toUri()));
+	}
 
-    public void setErrorOutput(String errorOutput) {
-        this.errorOutput = errorOutput;
-    }
+	/**
+	 * Constructor with assembly component-position map.
+	 * 
+	 * @param componentPositionMap
+	 *            Assembly components and positions
+	 */
+	public ConversionResult(Map<String, List<Position>> componentPositionMap) {
+		this.componentPositionMap = componentPositionMap;
+	}
 
-    public void close() {
-        try {
-            if (convertedFile != null) {
-                Files.deleteIfExists(Paths.get(convertedFile));
-            }
-            if (materials != null) {
-                for (URI m : materials) {
-                    Files.deleteIfExists(Paths.get(m));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
-    }
+	public Path getConvertedFile() {
+		return convertedFile != null ? Paths.get(convertedFile) : null;
+	}
+
+	void setConvertedFile(Path convertedFile) {
+		this.convertedFile = convertedFile.toUri();
+	}
+
+	public List<Path> getMaterials() {
+		return materials.stream().map((uri) -> {
+			return Paths.get(uri);
+		}).collect(Collectors.toList());
+	}
+
+	void setMaterials(List<Path> materials) {
+		this.materials = new ArrayList<>();
+		materials.forEach((path) -> this.materials.add(path.toUri()));
+	}
+
+	public String getStdOutput() {
+		return stdOutput;
+	}
+
+	public void setStdOutput(String stdOutput) {
+		this.stdOutput = stdOutput;
+	}
+
+	public String getErrorOutput() {
+		return errorOutput;
+	}
+
+	public void setErrorOutput(String errorOutput) {
+		this.errorOutput = errorOutput;
+	}
+
+	public Map<String, List<Position>> getComponentPositionMap() {
+		return this.componentPositionMap;
+	}
+
+	void setComponentPositionMap(Map<String, List<Position>> componentPositionMap) {
+		this.componentPositionMap = componentPositionMap;
+	}
+
+	public void close() {
+		try {
+			if (convertedFile != null) {
+				Files.deleteIfExists(Paths.get(convertedFile));
+			}
+			if (materials != null) {
+				for (URI m : materials) {
+					Files.deleteIfExists(Paths.get(m));
+				}
+			}
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, null, e);
+		}
+	}
 }
