@@ -49,7 +49,7 @@ public class ConversionResult implements Closeable, Serializable {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private double[] origin;
+		private double[] translation;
 		private double[][] rotationmatrix;
 
 		/**
@@ -63,12 +63,12 @@ public class ConversionResult implements Closeable, Serializable {
 		 *            Origin coordinates
 		 */
 		public Position(double[][] rm, double[] o) {
-			this.origin = o;
+			this.translation = o;
 			this.rotationmatrix = rm;
 		}
 
-		public double[] getOrigin() {
-			return origin;
+		public double[] getTranslation() {
+			return translation;
 		}
 
 		public double[][] getRotationMatrix() {

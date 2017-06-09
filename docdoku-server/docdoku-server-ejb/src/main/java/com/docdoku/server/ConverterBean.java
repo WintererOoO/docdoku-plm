@@ -326,7 +326,7 @@ public class ConverterBean implements IConverterManagerLocal {
 							.concat(Arrays.stream(p.getRotationMatrix()[1]), Arrays.stream(p.getRotationMatrix()[2])))
 					.toArray();
 			instances
-					.add(new CADInstance(new RotationMatrix(rm), p.getOrigin()[0], p.getOrigin()[1], p.getOrigin()[2]));
+					.add(new CADInstance(new RotationMatrix(rm), p.getTranslation()[0], p.getTranslation()[1], p.getTranslation()[2]));
 		}
 		return instances;
 	}
