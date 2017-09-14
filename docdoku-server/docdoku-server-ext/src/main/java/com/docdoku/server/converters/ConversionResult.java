@@ -56,13 +56,13 @@ public class ConversionResult implements Closeable, Serializable {
 	 * Constructor for a component position.
 	 * 
 	 * @param x
-	 *            1st line of the matrix
+	 *            1st column of the rotation matrix
 	 * @param y
-	 *            2nd line of the matrix
+	 *            2nd column of the rotation matrix
 	 * @param z
-	 *            3rd line of the matrix
+	 *            3rd column of the rotation matrix
 	 * @param o
-	 *            Origin coordinates
+	 *            Translation vector
 	 */
 	public Position(double[][] rm, double[] o) {
 	    this.translation = o;
