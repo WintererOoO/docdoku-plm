@@ -35,9 +35,9 @@ import javax.persistence.Transient;
 @Embeddable
 public class RotationMatrix implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private double m00, m01, m02, m10, m11, m12, m20, m21, m22;
+	private static final long serialVersionUID = 1L;
+	
+	private double m00, m01, m02, m10, m11, m12, m20, m21, m22;
 
     public RotationMatrix() {
 
