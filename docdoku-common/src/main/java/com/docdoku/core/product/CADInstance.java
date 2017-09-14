@@ -112,38 +112,11 @@ public class CADInstance implements Serializable, Cloneable {
     }
 
     public CADInstance(RotationMatrix rotationMatrix, double tx, double ty, double tz) {
-        //rotationType = RotationType.MATRIX;
-	rotationType = RotationType.ANGLE;
+        rotationType = RotationType.MATRIX;
         this.tx = tx;
         this.ty = ty;
         this.tz = tz;
         this.rotationMatrix = rotationMatrix;
-        
-        double[] rot = euler(rotationMatrix);
-        this.rx = rot[0];
-        this.ry = rot[1];
-        this.rz = rot[2];
-    }
-    
-    private double[] euler(RotationMatrix m) {
-	double ZERO_TOLERANCE = 1E-7;
-	double x,y,z;
-
-        if (Math.abs(m.getM02() - 1) < ZERO_TOLERANCE) {
-            x = -(Math.atan2(m.getM10(), m.getM11()));
-            y = -(-Math.PI / 2);
-            z = 0.0d;
-        } else if (Math.abs(m.getM02() + 1) < ZERO_TOLERANCE) {
-            x = Math.atan2(m.getM10(), m.getM11());
-            y = (Math.PI / 2);
-            z = 0.0d;
-        } else {
-            x = Math.atan2(m.getM12(), m.getM22());
-            y = Math.atan2(-m.getM02(), Math.sqrt(m.getM12() * m.getM12() + m.getM22() * m.getM22()));
-            z = Math.atan2(m.getM01(), m.getM00());
-        }
-
-        return new double[] {-x,-y,-z};
     }
 
     public double getRx() {
